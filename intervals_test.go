@@ -1,6 +1,7 @@
 package intervals
 
 import (
+	"fmt"
 	"math/rand"
 	"testing"
 )
@@ -23,13 +24,15 @@ func TestMapInsert(t *testing.T) {
 
 	for i := range testCases {
 		input, expected := testCases[i][0], testCases[i][1]
-		actual := make(Intervals)
-		for k, v := range input {
-			actual.Insert(k, v)
-		}
-		if !Equal(actual, expected) {
-			t.Errorf("input: %v expected: %v actual: %v", input, expected, actual)
-		}
+		t.Run(fmt.Sprintf("input: %v expected: %v", input, expected), func(t *testing.T) {
+			actual := make(Intervals)
+			for k, v := range input {
+				actual.Insert(k, v)
+			}
+			if !Equal(actual, expected) {
+				t.Errorf("input: %v expected: %v actual: %v", input, expected, actual)
+			}
+		})
 	}
 }
 
@@ -59,16 +62,18 @@ func TestMapDelete(t *testing.T) {
 
 	for i := range testCases {
 		input, toDelete, expected := testCases[i][0], testCases[i][1], testCases[i][2]
-		actual := make(Intervals)
-		for k, v := range input {
-			actual.Insert(k, v)
-		}
-		for k, v := range toDelete {
-			actual.Delete(k, v)
-		}
-		if !Equal(actual, expected) {
-			t.Errorf("input: %v deleted: %v expected: %v actual: %v", input, toDelete, expected, actual)
-		}
+		t.Run(fmt.Sprintf("input: %v deleted: %v", input, toDelete), func(t *testing.T) {
+			actual := make(Intervals)
+			for k, v := range input {
+				actual.Insert(k, v)
+			}
+			for k, v := range toDelete {
+				actual.Delete(k, v)
+			}
+			if !Equal(actual, expected) {
+				t.Errorf("input: %v deleted: %v expected: %v actual: %v", input, toDelete, expected, actual)
+			}
+		})
 	}
 }
 
@@ -86,9 +91,11 @@ func TestContains(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		if test.intervals.Contains(test.value) != test.expected {
-			t.Errorf("interval: %v value: %v expected: %v", test.intervals, test.value, test.expected)
-		}
+		t.Run(fmt.Sprintf("interval: %v value: %v", test.intervals, test.value), func(t *testing.T) {
+			if test.intervals.Contains(test.value) != test.expected {
+				t.Errorf("interval: %v value: %v expected: %v", test.intervals, test.value, test.expected)
+			}
+		})
 	}
 }
 
@@ -113,9 +120,11 @@ func TestOverlaps(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		if test.intervals.Overlaps(test.start, test.end) != test.expected {
-			t.Errorf("interval: %v start: %v end: %v expected: %v", test.intervals, test.start, test.end, test.expected)
-		}
+		t.Run(fmt.Sprintf("intervals: %v start: %v end: %v", test.intervals, test.start, test.end), func(t *testing.T) {
+			if test.intervals.Overlaps(test.start, test.end) != test.expected {
+				t.Errorf("interval: %v start: %v end: %v expected: %v", test.intervals, test.start, test.end, test.expected)
+			}
+		})
 	}
 }
 
